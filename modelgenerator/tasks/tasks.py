@@ -1638,7 +1638,12 @@ class Embed(TaskInterface):
             Tensor: The decoder logits
         """
         encoder_hidden = self.backbone(**collated_batch)  # (bs, seq_len, dim)
-        return encoder_hidden
+        return (
+            encoder_hidden.last_hidden_state,
+            encoder_hidden.hidden_states,
+            encoder_hidden.attention_mask,
+            encoder_hidden.special_tokens_mask,
+        )
 
     def required_data_columns(self, stage: str) -> list[str]:
         """The required data columns for the task.

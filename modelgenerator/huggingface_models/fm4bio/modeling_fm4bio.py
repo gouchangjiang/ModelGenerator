@@ -338,8 +338,8 @@ class FM4BioSelfAttention(nn.Module):
                     attention_mask = attention_mask.clone()
                     if torch.is_floating_point(attention_mask):
                         attention_mask[attention_mask < -1e-5] = torch.finfo(attention_mask.dtype).min
-                    if torch.allclose(attention_mask, torch.zeros_like(attention_mask)):
-                        attention_mask = None
+                    # if torch.allclose(attention_mask, torch.zeros_like(attention_mask)):
+                    #     attention_mask = None
 
             context_layer = torch.nn.functional.scaled_dot_product_attention(query_layer, key_layer, value_layer, attn_mask=attention_mask, dropout_p=(self.dropout.p if self.training else 0.0), is_causal=False, scale=None, enable_gqa=False)
 

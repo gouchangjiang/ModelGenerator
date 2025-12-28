@@ -509,12 +509,12 @@ class GenBioFM(HFSequenceBackbone):
             if special_tokens_mask is not None:
                 special_tokens_mask = special_tokens_mask[:, q_mask]
 
-        return SequenceBackboneOutput(
-            last_hidden_state=outputs.last_hidden_state,
-            hidden_states=outputs.hidden_states if all_hidden_states else None,
-            special_tokens_mask=special_tokens_mask,
-            attention_mask=attention_mask,
-        )
+        return {
+            "last_hidden_state": outputs.last_hidden_state,
+            # "hidden_states": outputs.hidden_states if all_hidden_states else None,
+            # "special_tokens_mask": special_tokens_mask,
+            # "attention_mask": attention_mask,
+        }
 
     def get_decoder(self) -> nn.Module:
         """Returns the pre-trained decoder

@@ -555,7 +555,7 @@ class FM4BioMLP(nn.Module):
             s, b, n = hidden_states.shape
             dtype = hidden_states.dtype
             hidden_states = hidden_states.view(-1, hidden_states.size(2))  # [s*b h]
-            self.router = self.router.float()
+            # self.router = self.router.float()
             route = self.router(hidden_states.float()).to(dtype)
 
             weights, selected_experts = torch.topk(route, self.experts_per_token)
@@ -567,10 +567,10 @@ class FM4BioMLP(nn.Module):
             )
             for expert_idx in range(self.num_experts):
                 batch_idx, nth_expert = torch.where(selected_experts == expert_idx)
-                if nth_expert.shape[0] == 0:
-                    continue
                 cur_out = self.moe_forward(hidden_states[batch_idx], expert_idx)
-                output[batch_idx] += weights[batch_idx, nth_expert, None] * cur_out
+                update = weights[batch_idx, nth_expert, None] * cur_out
+                index = batch_idx.unsqueeze(1).expand(-1, hidden_states.shape[1])
+                output.scatter_add_(0, index, update)
             output = output.reshape(s, b, n)
         else:
             # [s, b, 4hp]
